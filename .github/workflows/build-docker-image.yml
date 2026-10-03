@@ -14,4 +14,4 @@ jobs:
         run: printf '%s' "${{ secrets.UNIKRAFT_TOKEN }}" | unikraft login --token -
 
       - name: Run instance
-        run: unikraft run --metro sin -p 443:8080/http+tls -m 512M --image "${{ secrets.UNIKRAFT_ORG }}/singbox:latest"
+        run: unikraft run --metro sin -p 443:8080/http+tls -m 512M --image "${{ secrets.UNIKRAFT_ORG }}/singbox:latest" -- /usr/local/bin/sing-box run -c /etc/sing-box/config.json
