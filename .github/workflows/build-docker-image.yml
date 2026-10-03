@@ -7,11 +7,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install Unikraft CLI
         uses: unikraft/setup-action@v1
+
+      - name: Setup BuildKit
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Unikraft Cloud
         run: printf '%s' "${{ secrets.UNIKRAFT_TOKEN }}" | unikraft login --token -
 
       - name: Run instance
-        run: unikraft run --metro sin -p 443:8080/http+tls -m 512M --image "${{ secrets.UNIKRAFT_ORG }}/singbox:latest"
+        run: unikraft run --metro sin -p 443:8080/http+tls -m 512M .
