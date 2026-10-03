@@ -12,7 +12,8 @@ RUN apt-get update \
 COPY --from=downloader /tmp/chisel /usr/local/bin/chisel
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh /start.sh
-RUN chmod +x /start.sh
+RUN chmod +x /start.sh \
+    && mkdir -p /var/cache/nginx /var/log/nginx /run \
+    && nginx -t -c /etc/nginx/nginx.conf
 EXPOSE 8080
 CMD ["/start.sh"]
-
