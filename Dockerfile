@@ -1,12 +1,18 @@
 FROM debian:13-slim AS downloader
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl \
-    && curl -Lo /tmp/sb.tar.gz https://github.com/SagerNet/sing-box/releases/download/v1.14.2/sing-box-1.14.2-linux-amd64.tar.gz \
-    && tar xzf /tmp/sb.tar.gz -C /tmp --strip-components=1 \
-    && rm /tmp/sb.tar.gz
+    && curl -Lo /tmp/chisel.gz https://github.com/jpillora/chisel/releases/download/v1.10.1/chisel_1.10.1_linux_amd64.gz \
+    && gunzip /tmp/chisel.gz \
+    && chmod +x /tmp/chisel
 
 FROM debian:13-slim
-COPY --from=downloader /tmp/sing-box /usr/local/bin/sing-box
-COPY config.json /etc/sing-box/config.json
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nginx ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=downloader /tmp/chisel /usr/local/bin/chisel
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 EXPOSE 8080
-CMD ["/usr/local/bin/sing-box", "run", "-c", "/etc/sing-box/config.json"]
+CMD ["/start.sh"]
+
