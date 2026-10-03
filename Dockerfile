@@ -5,7 +5,8 @@ RUN apt-get update \
     && tar xzf /tmp/sb.tar.gz -C /tmp --strip-components=1 \
     && rm /tmp/sb.tar.gz
 
-FROM scratch
+FROM debian:13-slim
 COPY --from=downloader /tmp/sing-box /usr/local/bin/sing-box
 COPY config.json /etc/sing-box/config.json
+EXPOSE 8080
 CMD ["/usr/local/bin/sing-box", "run", "-c", "/etc/sing-box/config.json"]
